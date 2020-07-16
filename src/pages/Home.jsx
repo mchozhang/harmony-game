@@ -1,8 +1,9 @@
-import { Layout } from "antd";
-import React from "react";
-import LevelGrid from "../components/LevelGrid";
+import { Layout } from "antd"
+import React from "react"
+import LevelGrid from "../components/LevelGrid"
+import GameGrid from "../components/GameGrid"
 
-const { Header, Content, Footer } = Layout;
+const { Header, Content } = Layout
 
 const Home = (props) => {
   return (
@@ -11,9 +12,8 @@ const Home = (props) => {
       <Content>
         <LevelGrid />
       </Content>
-      <Footer></Footer>
     </Layout>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home

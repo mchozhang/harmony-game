@@ -1,22 +1,22 @@
-import React from "react";
-import { Row, Col, Divider, Button, Typography } from "antd";
-import levelData from "../data/levels.json";
-import "../styles/level-grid.less";
-import { Link } from "react-router-dom";
+import React from "react"
+import { Row, Col, Button, Typography } from "antd"
+import levelData from "../data/levels.json"
+import "../styles/level-grid.less"
+import { Link } from "react-router-dom"
 
-const { Title } = Typography;
+const { Title } = Typography
 
 const LevelGrid = (props) => {
-  let levels = [];
+  let levels = []
 
   for (let i = 0; i < levelData.levels.length; i++) {
     levels.push(
       <Col className="col" key={i}>
-        <Link to={"/level/" + levelData.levels[i]}>
+        <Link to={`/level/${levelData.levels[i]}`}>
           <Button className="level-btn">{levelData.levels[i]}</Button>
         </Link>
       </Col>
-    );
+    )
   }
 
   return (
@@ -35,7 +35,7 @@ const LevelGrid = (props) => {
         </Col>
       </Row>
     </>
-  );
-};
+  )
+}
 
-export default LevelGrid;
+export default LevelGrid

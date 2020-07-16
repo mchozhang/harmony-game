@@ -1,13 +1,14 @@
-const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const path = require("path")
+const HtmlWebpackPlugin = require("html-webpack-plugin")
+const { CleanWebpackPlugin } = require("clean-webpack-plugin")
+const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 
 module.exports = {
   entry: "./src/index.jsx",
   output: {
     filename: "bundle.js",
     path: path.resolve("dist"),
+    publicPath: "/",
   },
   module: {
     rules: [
@@ -59,5 +60,6 @@ module.exports = {
   devServer: {
     port: 3000,
     hot: true,
+    historyApiFallback: true,
   },
-};
+}
