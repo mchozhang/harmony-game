@@ -1,38 +1,49 @@
+/**
+ * cell of the game grid
+ */
 import React, { useState, useEffect } from "react"
 import "../styles/cell.less"
 import PropTypes from "prop-types"
-import { Space, Typography } from "antd"
+import { Space } from "antd"
 import { useGameContext } from "../modules/GameContext"
-
-const { Title } = Typography
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faCheck, faStar } from "@fortawesome/free-solid-svg-icons"
 
 const Cell = (props) => {
-  const { cells, colors, handleCellClicked, selectedCell } = useGameContext()
+  const {
+    cells,
+    colors,
+    handleCellClicked,
+    selectedCell,
+    hasWon,
+  } = useGameContext()
 
+  // current cell object
   let cell = cells[props.row][props.col]
-  // let isSelected = false
+
+  // color of the cell
   const [color, setColor] = useState(colors[cell.targetRow])
-  const [textColor, setTextColor] = useState(getTextColor(color))
-  const [text, setText] = useState(getText(cell.steps))
-  const [edgeLength, setEdgeLength] = useState(150)
-  const [margin, setMargin] = useState(0)
+  // high contrast color for text and border
+  const [contrastColor, setContrastColor] = useState(getContrastColor(color))
+  const [borderWidth, setBorderWidth] = useState(0)
+
+  // present icons in the cell
+  let icons = getIcons()
 
   useEffect(() => {
     // update cell states, triggered when any cell data is updated
-    setColor(colors[cell.targetRow])
-    setTextColor(getTextColor(color))
-    setText(getText([cell.steps]))
+    setColor(getColor(cell, colors))
+    setContrastColor(getContrastColor(color))
 
+    // present the border when selected
     if (
       selectedCell !== null &&
       selectedCell.row === cell.row &&
       selectedCell.col === cell.col
     ) {
-      setEdgeLength(160)
-      setMargin(-10)
+      setBorderWidth(2)
     } else {
-      setEdgeLength(150)
-      setMargin(0)
+      setBorderWidth(0)
     }
   })
 
@@ -40,37 +51,47 @@ const Cell = (props) => {
     handleCellClicked(cell.row, cell.col)
   }
 
+  /**
+   * set icons of the cell based on its state
+   * @returns []
+   */
+  function getIcons() {
+    if (hasWon) {
+      return <FontAwesomeIcon size="lg" icon={faCheck} color={contrastColor} />
+    }
+    // has steps remained
+    let stars = []
+    for (let i = 0; i < cell.steps; i++) {
+      stars.push(
+        <FontAwesomeIcon
+          size="lg"
+          icon={faStar}
+          color={contrastColor}
+          key={i}
+        />
+      )
+    }
+    // place a dummy component
+    if (stars.length === 0) {
+      return <span />
+    }
+    return stars
+  }
+
   return (
     <Space
       className="cell"
       style={{
         backgroundColor: color,
-        width: edgeLength,
-        height: edgeLength,
-        margin: margin,
+        borderWidth: borderWidth,
+        borderColor: contrastColor,
       }}
       align="center"
       onClick={() => onCellClicked()}
     >
-      <Title className="text" style={{ color: textColor }}>
-        {text}
-      </Title>
+      {icons}
     </Space>
   )
-}
-
-/**
- * set cell text based on steps
- * @param steps
- * @returns {string}
- */
-function getText(steps) {
-  // set text
-  let text = ""
-  for (let i = 0; i < steps; i++) {
-    text += "＊"
-  }
-  return text
 }
 
 /**
@@ -78,7 +99,7 @@ function getText(steps) {
  * of the cell color
  * @param cellColor color of the cell
  */
-function getTextColor(cellColor) {
+function getContrastColor(cellColor) {
   // extract RGB
   let r = cellColor.slice(1, 3)
   let g = cellColor.slice(3, 5)
@@ -91,6 +112,21 @@ function getTextColor(cellColor) {
     textColor = "#444444"
   }
   return textColor
+}
+
+/**
+ * get the color of the cell
+ * @param cell cell objects
+ * @param colors color array of the game grid
+ */
+function getColor(cell, colors) {
+  if (cell.steps === 0 && cell.row !== cell.targetRow) {
+    // set to black if it's misplaced without steps left
+    return "#212121"
+  } else {
+    // original color
+    return colors[cell.targetRow]
+  }
 }
 
 Cell.propTypes = {

@@ -1,21 +1,24 @@
-import React, { useState } from "react"
-import { Row, Col } from "antd"
+/**
+ * game grid, consists of game row
+ */
+import React from "react"
 import GameRow from "./GameRow"
 import { useGameContext } from "../modules/GameContext"
+import "../styles/game-grid.less"
 
 const GameGrid = (props) => {
-  const { cells, size } = useGameContext()
-
-  let gameRows = []
+  const { size } = useGameContext()
 
   // initialize data for each row
+  let gameRows = []
   for (let i = 0; i < size; i++) {
     gameRows.push(<GameRow row={i} key={i} />)
   }
 
   return (
     <>
-      {gameRows}
+      {/*game grid*/}
+      <div>{gameRows}</div>
     </>
   )
 }

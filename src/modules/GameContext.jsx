@@ -4,6 +4,7 @@
 import React, { createContext, useContext, useState } from "react"
 
 let game = {
+  level: 0,
   cells: [],
   selectedCell: [-1, -1],
   colors: [],
