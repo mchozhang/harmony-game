@@ -1,7 +1,9 @@
+/**
+ * The home page displays the level grid
+ */
 import { Layout } from "antd"
 import React from "react"
 import LevelGrid from "../components/LevelGrid"
-import GameGrid from "../components/GameGrid"
 
 const { Header, Content } = Layout
 

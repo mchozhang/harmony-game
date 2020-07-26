@@ -1,3 +1,6 @@
+/**
+ * Grid view that let player select levels
+ */
 import React from "react"
 import { Row, Col, Button, Typography } from "antd"
 import levelData from "../data/levels.json"

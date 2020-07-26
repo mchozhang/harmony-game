@@ -2,7 +2,7 @@
  * Game page, displays the layout of the game
  */
 import { Button, Col, Layout, Row, Typography, Modal } from "antd"
-import React, { useState, useRef } from "react"
+import React, { useState, useRef, useEffect } from "react"
 import GameGrid from "../components/GameGrid"
 import PropTypes from "prop-types"
 import { GameContext } from "../modules/GameContext"
@@ -13,32 +13,50 @@ import {
   faRedo,
   faUndo,
 } from "@fortawesome/free-solid-svg-icons"
-import gridData from "../data/level1.json"
 import { cloneDeep } from "lodash"
 import { Link, useHistory } from "react-router-dom"
+import { useQuery } from "@apollo/client"
+import { GET_LEVEL } from "../modules/Queries"
 
 const { Title } = Typography
 const { Header, Content } = Layout
 
 const Game = (props) => {
-  const history = useHistory()
-
+  // parse parameters
   let level = parseInt(props.match.params.id)
 
-  // deep copy the cells data
-  const originalGridData = cloneDeep(gridData.cells)
-  const size = parseInt(gridData.size)
-  const colors = gridData.colors
+  // browser history
+  const history = useHistory()
+
+  // game states
   const [selectedCell, setSelectedCell] = useState(null)
-  const [cells, setCells] = useState([...originalGridData])
+  const [size, setSize] = useState(0)
+  const [cells, setCells] = useState([])
+  const [colors, setColors] = useState([])
   const [isDead, setIsDead] = useState(false)
   const [hasWon, setHasWon] = useState(false)
-
-  // counter for cells complete
   const completeCounter = useRef(0)
-
-  // last move
   const lastMove = useRef(null)
+  const originalCells = useRef(null)
+
+  // graphql query request
+  const { loading, error, data } = useQuery(GET_LEVEL, {
+    variables: { id: level },
+  })
+
+  useEffect(() => {
+    // parse data from query result
+    if (data != null) {
+      originalCells.current = cloneDeep(data.level.cells)
+      setColors(data.level.colors)
+      setSize(data.level.size)
+      setCells(cloneDeep(data.level.cells))
+    }
+  }, [data])
+
+  // display query loading and error
+  if (loading) return null
+  if (error) return `Error! ${error}`
 
   // visibility of the last and next level buttons
   let lastLevelVisibility = "hidden"
