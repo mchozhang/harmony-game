@@ -65,14 +65,14 @@ const Cell = (props) => {
    */
   function getIcons() {
     if (hasWon) {
-      return <FontAwesomeIcon size="lg" icon={faCheck} color={contrastColor} />
+      return <FontAwesomeIcon size="2x" icon={faCheck} color={contrastColor} />
     }
     // has steps remained
     let stars = []
     for (let i = 0; i < cell.current.steps; i++) {
       stars.push(
         <FontAwesomeIcon
-          size="lg"
+          size="2x"
           icon={faStar}
           color={contrastColor}
           key={i}

@@ -4,6 +4,7 @@
 import { Button, Col, Layout, Row, Typography, Modal } from "antd"
 import React, { useState, useRef, useEffect } from "react"
 import GameGrid from "../components/GameGrid"
+import TopBar from "../components/TopBar"
 import PropTypes from "prop-types"
 import { GameContext } from "../modules/GameContext"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
@@ -17,9 +18,12 @@ import { cloneDeep } from "lodash"
 import { Link, useHistory } from "react-router-dom"
 import { useQuery } from "@apollo/client"
 import { GET_LEVEL } from "../modules/Queries"
+import "../styles/game.less"
+import Cookies from "universal-cookie"
 
 const { Title } = Typography
-const { Header, Content } = Layout
+const { Content } = Layout
+const cookies = new Cookies()
 
 const Game = (props) => {
   // parse parameters
@@ -37,7 +41,6 @@ const Game = (props) => {
   const [hasWon, setHasWon] = useState(false)
   const completeCounter = useRef(0)
   const lastMove = useRef(null)
-  const originalCells = useRef(null)
 
   // graphql query request
   const { loading, error, data } = useQuery(GET_LEVEL, {
@@ -47,10 +50,7 @@ const Game = (props) => {
   useEffect(() => {
     // parse data from query result
     if (data != null) {
-      originalCells.current = cloneDeep(data.level.cells)
-      setColors(data.level.colors)
-      setSize(data.level.size)
-      setCells(cloneDeep(data.level.cells))
+      restart(data)
     }
   }, [data])
 
@@ -131,8 +131,23 @@ const Game = (props) => {
 
     // check whether the game has finished
     if (completeCounter.current === size * size) {
+      const cookies = new Cookies()
+
+      setLevelCookies()
       setHasWon(true)
       nextLevel()
+    }
+  }
+
+  /**
+   * use cookies to record the levels that have been conquered
+   */
+  function setLevelCookies() {
+    let conquered = cookies.get("conquered")
+    if (conquered == null) {
+      cookies.set("conquered", `${level},`)
+    } else {
+      cookies.set("conquered", conquered + `${level},`)
     }
   }
 
@@ -162,10 +177,13 @@ const Game = (props) => {
   }
 
   /**
-   * restart the game, re-initialize the data
+   * restart the game, re-initialize the game data
+   * @param data game data from query result
    */
-  function restart() {
-    setCells(cloneDeep(originalGridData))
+  function restart(data) {
+    setCells(cloneDeep(data.level.cells))
+    setColors(cloneDeep(data.level.colors))
+    setSize(data.level.size)
     setSelectedCell(null)
     setIsDead(false)
     setHasWon(false)
@@ -232,7 +250,7 @@ const Game = (props) => {
 
   return (
     <Layout>
-      <Header>Harmony Game</Header>
+      <TopBar />
       <Content>
         <GameContext.Provider value={context}>
           {/*top bar*/}
