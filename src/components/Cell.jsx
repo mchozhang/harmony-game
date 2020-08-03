@@ -2,12 +2,13 @@
  * cell of the game grid
  */
 import React, { useState, useEffect, useRef } from "react"
-import "../styles/cell.less"
 import PropTypes from "prop-types"
 import { Space } from "antd"
-import { useGameContext } from "../modules/GameContext"
+import { useGameContext } from "../utils/GameContext"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCheck, faStar } from "@fortawesome/free-solid-svg-icons"
+import { computeContrastColor, computeColor } from "../utils/ColorUtils"
+import "../styles/cell.less"
 
 const Cell = (props) => {
   const {
@@ -37,8 +38,7 @@ const Cell = (props) => {
 
   useEffect(() => {
     if (cells != null) cell.current = cells[props.row][props.col]
-    // cell.current = cells.length ? cells[props.row][props.col] : cell.current
-    // update cell states, triggered when any cell data is updated
+    // update cell states, triggered when any cell config is updated
     let cellColor = computeColor(cell.current, colors)
     setColor(cellColor)
     setContrastColor(computeContrastColor(cellColor))
@@ -100,41 +100,6 @@ const Cell = (props) => {
       {icons}
     </Space>
   )
-}
-
-/**
- * compute text color(steps remained) as a high contrast color
- * of the cell color
- * @param cellColor color string of the cell
- */
-function computeContrastColor(cellColor) {
-  // extract RGB
-  let r = cellColor.slice(1, 3)
-  let g = cellColor.slice(3, 5)
-  let b = cellColor.slice(5, 7)
-  let count = parseInt(r, 16) + parseInt(g, 16) + parseInt(b, 16)
-
-  // compute high contrast color
-  let textColor = "#dddddd"
-  if (count > 128 * 3) {
-    textColor = "#444444"
-  }
-  return textColor
-}
-
-/**
- * get the color of the cell
- * @param cell cell objects
- * @param colors color array of the game grid
- */
-function computeColor(cell, colors) {
-  // set to black if it's misplaced without steps left
-  if (cell.steps === 0 && cell.row !== cell.targetRow) {
-    return "#212121"
-  } else {
-    // original color
-    return colors[cell.targetRow]
-  }
 }
 
 Cell.propTypes = {

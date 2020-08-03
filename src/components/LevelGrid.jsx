@@ -3,7 +3,7 @@
  */
 import React from "react"
 import { Row, Col, Button, Typography } from "antd"
-import levelData from "../data/levels.json"
+import levelData from "../config/levels.json"
 import "../styles/level-grid.less"
 import { Link } from "react-router-dom"
 import Cookies from "universal-cookie"

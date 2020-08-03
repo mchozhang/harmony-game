@@ -5,7 +5,7 @@ import React from "react"
 import { Row, Col, Space } from "antd"
 import PropTypes from "prop-types"
 import Cell from "./Cell"
-import { useGameContext } from "../modules/GameContext"
+import { useGameContext } from "../utils/GameContext"
 
 const GameRow = (props) => {
   const { colors, cells, size } = useGameContext()
