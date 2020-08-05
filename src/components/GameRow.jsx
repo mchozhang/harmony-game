@@ -8,7 +8,7 @@ import Cell from "./Cell"
 import { useGameContext } from "../utils/GameContext"
 
 const GameRow = (props) => {
-  const { colors, cells, size } = useGameContext()
+  const { colors, cells } = useGameContext()
   const color = colors[props.row]
   let rowCells = cells[props.row]
 

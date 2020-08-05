@@ -72,14 +72,14 @@ function validMovesForCell(row, col, grid) {
   // cells in the same column
   for (let i = row + 1; i < grid.length; i++) {
     let target = grid[i][col]
-    if (swapable(origin, target)) {
+    if (exchangeable(origin, target)) {
       result.push([row, col, i, col])
     }
   }
   //cells in the same row
   for (let i = col + 1; i < grid.length; i++) {
     let target = grid[row][i]
-    if (swapable(origin, target)) {
+    if (exchangeable(origin, target)) {
       result.push([row, col, row, i])
     }
   }
@@ -88,11 +88,11 @@ function validMovesForCell(row, col, grid) {
 
 /**
  * pre-condition: origin has steps remained
- * whether 2 cells are swapable
+ * whether 2 cells are exchangeable(not dead after exchanging)
  * @param origin origin cell
  * @param target target cell
  */
-function swapable(origin, target) {
+function exchangeable(origin, target) {
   return (
     target.steps > 0 &&
     !(origin.steps === 1 && origin.targetRow !== target.row) &&

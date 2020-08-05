@@ -6,7 +6,7 @@ import React from "react"
 import LevelGrid from "../components/LevelGrid"
 import TopBar from "../components/TopBar"
 
-const { Header, Content } = Layout
+const { Content } = Layout
 
 const Home = (props) => {
   return (

@@ -44,7 +44,7 @@ const Cell = (props) => {
       selectedCell.row === row &&
       selectedCell.col === col
     ) {
-      setBorderWidth(2)
+      setBorderWidth(5)
     } else {
       setBorderWidth(0)
     }

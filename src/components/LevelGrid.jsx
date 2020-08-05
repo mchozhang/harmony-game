@@ -8,7 +8,7 @@ import "../styles/level-grid.less"
 import { Link } from "react-router-dom"
 import Cookies from "universal-cookie"
 
-const { Title, Text } = Typography
+const { Title } = Typography
 const cookies = new Cookies()
 
 const LevelGrid = (props) => {
@@ -18,7 +18,6 @@ const LevelGrid = (props) => {
   let conquered = []
   if (conqueredCookie != null) {
     conquered = conqueredCookie.split(",")
-    console.log(conquered)
   }
 
   for (let i = 0; i < levelData.levels.length; i++) {

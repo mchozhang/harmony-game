@@ -1,5 +1,5 @@
 /**
- *  graphql mutations and queris
+ *  graphql mutations and queries
  */
 
 import { gql } from "@apollo/client"

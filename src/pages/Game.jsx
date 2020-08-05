@@ -2,7 +2,7 @@
  * Game page, displays the layout of the game
  */
 import { Layout } from "antd"
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import GameGrid from "../components/GameGrid"
 import TopBar from "../components/TopBar"
 import PropTypes from "prop-types"
@@ -39,6 +39,7 @@ const Game = (props) => {
    * restart the game, re-initialize the game config
    */
   const restart = () => {
+    console.log("restart")
     setCells(cloneDeep(data.level.cells))
     setColors(cloneDeep(data.level.colors))
     setSize(data.level.size)
@@ -52,6 +53,12 @@ const Game = (props) => {
     variables: { id: level },
     onCompleted: restart,
   })
+
+  useEffect(() => {
+    if (data != null) {
+      restart()
+    }
+  }, [data])
 
   // display query loading and error
   if (loading) return null
