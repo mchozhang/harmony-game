@@ -2,7 +2,7 @@
  * Game page, displays the layout of the game
  */
 import { Layout } from "antd"
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import GameGrid from "../components/GameGrid"
 import TopBar from "../components/TopBar"
 import PropTypes from "prop-types"
@@ -11,7 +11,7 @@ import { cloneDeep } from "lodash"
 import { useHistory } from "react-router-dom"
 import { useQuery } from "@apollo/client"
 import { GET_LEVEL } from "../utils/GraphQL"
-import { hasWon, isDead } from "../utils/GameHelper"
+import { hasWon, isDead } from "../utils/GameSolver"
 import "../styles/game.less"
 import Cookies from "universal-cookie"
 import GameTopBar from "../components/GameTopBar"
@@ -33,18 +33,25 @@ const Game = (props) => {
   const [cells, setCells] = useState([])
   const [colors, setColors] = useState([])
   const [lastMove, setLastMove] = useState(null)
+  const [hintMove, setHintMove] = useState(null)
+
+  /**
+   * restart the game, re-initialize the game config
+   */
+  const restart = () => {
+    setCells(cloneDeep(data.level.cells))
+    setColors(cloneDeep(data.level.colors))
+    setSize(data.level.size)
+    setSelectedCell(null)
+    setLastMove(null)
+    setHintMove(null)
+  }
 
   // graphql query request
   const { loading, error, data } = useQuery(GET_LEVEL, {
     variables: { id: level },
+    onCompleted: restart,
   })
-
-  useEffect(() => {
-    // parse config from query result
-    if (data != null) {
-      restart()
-    }
-  }, [data, restart])
 
   // display query loading and error
   if (loading) return null
@@ -65,6 +72,7 @@ const Game = (props) => {
     if (selectedCell === null) {
       // select the first cell
       setSelectedCell(cells[row][col])
+      setHintMove(null)
     } else if (selectedCell.row === row && selectedCell.col === col) {
       // unselect the cell
       setSelectedCell(null)
@@ -104,6 +112,8 @@ const Game = (props) => {
       col2: secondCell.col,
     })
 
+    setHintMove(null)
+
     // shallow copy, update cells config
     setCells([...cells])
 
@@ -137,27 +147,19 @@ const Game = (props) => {
     }
   }
 
-  /**
-   * restart the game, re-initialize the game config
-   */
-  const restart = () => {
-    setCells(cloneDeep(data.level.cells))
-    setColors(cloneDeep(data.level.colors))
-    setSize(data.level.size)
-    setSelectedCell(null)
-    setLastMove(null)
-  }
-
   // initial game context config
   const context = {
     level: level,
     cells: cells,
     setCells: setCells,
     selectedCell: selectedCell,
+    setSelectedCell: setSelectedCell,
     colors: colors,
     size: size,
     lastMove: lastMove,
     setLastMove: setLastMove,
+    hintMove: hintMove,
+    setHintMove: setHintMove,
     handleCellClicked: handleCellClicked,
     handleRestart: restart,
   }

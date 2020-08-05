@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faRedo, faUndo } from "@fortawesome/free-solid-svg-icons"
 import "../styles/game.less"
 import { useGameContext } from "../utils/GameContext"
-import { hasWon } from "../utils/GameHelper"
+import { hasWon } from "../utils/GameSolver"
 import { computeContrastColor } from "../utils/ColorUtils"
 
 const { Title } = Typography
@@ -19,7 +19,9 @@ const GameTopBar = (props) => {
     cells,
     lastMove,
     setLastMove,
+    setHintMove,
     setCells,
+    setSelectedCell,
     handleRestart,
   } = useGameContext()
 
@@ -56,6 +58,8 @@ const GameTopBar = (props) => {
 
     // only the move recent move can be undone
     setLastMove(null)
+    setHintMove(null)
+    setSelectedCell(null)
   }
 
   /**

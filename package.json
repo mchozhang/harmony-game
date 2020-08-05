@@ -9,6 +9,7 @@
     "@fortawesome/react-fontawesome": "^0.1.11",
     "antd": "^4.4.2",
     "graphql": "^15.3.0",
+    "js-priority-queue": "^0.1.5",
     "lodash": "^4.17.19",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",

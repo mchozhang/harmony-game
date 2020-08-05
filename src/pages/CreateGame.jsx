@@ -12,27 +12,33 @@ const CreateGame = (props) => {
     createLevel({
       variables: {
         input: {
-          level: 3,
-          size: 3,
-          colors: ["#EF5350", "#FFAB91", "#FFF8E1"],
+          level: 14,
+          size: 4,
+          colors: ["#0288D1", "#BDBDBD", "#FFF3E0", "#CFD8DC"],
           cells: [
             [
               {
-                targetRow: 2,
-                steps: 1,
+                targetRow: 3,
+                steps: 3,
                 col: 0,
                 row: 0,
               },
               {
-                targetRow: 1,
+                targetRow: 0,
                 steps: 1,
                 col: 1,
                 row: 0,
               },
               {
-                targetRow: 2,
-                steps: 2,
+                targetRow: 1,
+                steps: 1,
                 col: 2,
+                row: 0,
+              },
+              {
+                targetRow: 1,
+                steps: 1,
+                col: 3,
                 row: 0,
               },
             ],
@@ -44,21 +50,27 @@ const CreateGame = (props) => {
                 row: 1,
               },
               {
-                targetRow: 0,
+                targetRow: 1,
                 steps: 1,
                 col: 1,
                 row: 1,
               },
               {
                 targetRow: 0,
-                steps: 2,
+                steps: 1,
                 col: 2,
+                row: 1,
+              },
+              {
+                targetRow: 0,
+                steps: 1,
+                col: 3,
                 row: 1,
               },
             ],
             [
               {
-                targetRow: 0,
+                targetRow: 2,
                 steps: 1,
                 col: 0,
                 row: 2,
@@ -70,10 +82,42 @@ const CreateGame = (props) => {
                 row: 2,
               },
               {
-                targetRow: 1,
-                steps: 2,
+                targetRow: 2,
+                steps: 1,
                 col: 2,
                 row: 2,
+              },
+              {
+                targetRow: 2,
+                steps: 1,
+                col: 3,
+                row: 2,
+              },
+            ],
+            [
+              {
+                targetRow: 0,
+                steps: 2,
+                col: 0,
+                row: 3,
+              },
+              {
+                targetRow: 3,
+                steps: 1,
+                col: 1,
+                row: 3,
+              },
+              {
+                targetRow: 3,
+                steps: 1,
+                col: 2,
+                row: 3,
+              },
+              {
+                targetRow: 3,
+                steps: 2,
+                col: 3,
+                row: 3,
               },
             ],
           ],

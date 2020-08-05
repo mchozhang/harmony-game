@@ -1,7 +1,7 @@
 /**
  * cell of the game grid
  */
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect } from "react"
 import PropTypes from "prop-types"
 import { Space } from "antd"
 import { useGameContext } from "../utils/GameContext"
@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCheck, faStar } from "@fortawesome/free-solid-svg-icons"
 import { computeContrastColor, computeColor } from "../utils/ColorUtils"
 import "../styles/cell.less"
+import { hasWon } from "../utils/GameSolver"
 
 const Cell = (props) => {
   const {
@@ -16,16 +17,11 @@ const Cell = (props) => {
     colors,
     handleCellClicked,
     selectedCell,
-    hasWon,
+    hintMove,
   } = useGameContext()
 
-  // current cell object
-  const cell = useRef({
-    targetRow: 0,
-    steps: 0,
-    row: props.row,
-    col: props.col,
-  })
+  const row = props.row
+  const col = props.col
 
   // color of the cell
   const [color, setColor] = useState("#000000")
@@ -37,39 +33,49 @@ const Cell = (props) => {
   let icons = getIcons()
 
   useEffect(() => {
-    if (cells != null) cell.current = cells[props.row][props.col]
     // update cell states, triggered when any cell config is updated
-    let cellColor = computeColor(cell.current, colors)
+    let cellColor = computeColor(cells[row][col], colors)
     setColor(cellColor)
     setContrastColor(computeContrastColor(cellColor))
 
     // present the border when selected
     if (
       selectedCell !== null &&
-      selectedCell.row === props.row &&
-      selectedCell.col === props.col
+      selectedCell.row === row &&
+      selectedCell.col === col
     ) {
       setBorderWidth(2)
     } else {
       setBorderWidth(0)
     }
-  }, [cell, colors, color, selectedCell, cells, props.row, props.col])
+
+    // border of hint move
+    if (hintMove !== null) {
+      if (
+        (hintMove[0] === row && hintMove[1] === col) ||
+        (hintMove[2] === row && hintMove[3] === col)
+      ) {
+        setBorderWidth(5)
+      } else {
+        setBorderWidth(0)
+      }
+    }
+  }, [colors, color, selectedCell, cells, row, col, hintMove])
 
   const onCellClicked = () => {
-    handleCellClicked(props.row, props.col)
+    handleCellClicked(row, col)
   }
 
   /**
    * set icons of the cell based on its state
-   * @returns []
    */
   function getIcons() {
-    if (hasWon) {
+    if (hasWon(cells)) {
       return <FontAwesomeIcon size="2x" icon={faCheck} color={contrastColor} />
     }
     // has steps remained
     let stars = []
-    for (let i = 0; i < cell.current.steps; i++) {
+    for (let i = 0; i < cells[row][col].steps; i++) {
       stars.push(
         <FontAwesomeIcon
           size="2x"
