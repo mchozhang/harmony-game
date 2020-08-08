@@ -1,132 +1,139 @@
 /**
  * Page enabling admin to create a new game
  */
-import React from "react"
-import { Button } from "antd"
-import { useMutation } from "@apollo/client"
-import { CREATE_LEVEL } from "../utils/GraphQL"
+import React, { useRef, useState } from "react"
+import { Button, Col, Input, InputNumber, Row } from "antd"
+import { useLazyQuery, useMutation } from "@apollo/client"
+import { CREATE_LEVEL, GET_LEVEL } from "../utils/GraphQL"
 
 const CreateGame = (props) => {
-  const [createLevel, { data }] = useMutation(CREATE_LEVEL)
+  const [createLevel] = useMutation(CREATE_LEVEL)
+  const [size, setSize] = useState(5)
+
+  // dom refs
+  const levelInput = useRef()
+  const sizeInput = useRef()
+  const colorInputs = useRef({})
+  const stepInputs = useRef({})
+  const targetRowInputs = useRef({})
+
+  // row components
+  const rows = getRows()
+
+  function getRows() {
+    let result = []
+    for (let i = 0; i < size; i++) {
+      let cellInputs = []
+      for (let j = 0; j < size; j++) {
+        cellInputs.push(
+          <Col key={j}>
+            <InputNumber
+              ref={(ref) => (stepInputs.current[`${i},${j}`] = ref)}
+            />
+            <InputNumber
+              ref={(ref) => (targetRowInputs.current[`${i},${j}`] = ref)}
+              style={{ marginRight: 10 }}
+            />
+          </Col>
+        )
+      }
+      result.push(
+        <Row key={i} style={{ marginTop: 10 }}>
+          <Col>
+            <Input
+              placeholder="color"
+              ref={(ref) => (colorInputs.current[i] = ref)}
+            />
+          </Col>
+          {cellInputs}
+        </Row>
+      )
+    }
+    return result
+  }
+
+  /**
+   * callback of the query, update the data of the inputs
+   */
+  const updateData = () => {
+    if (data != null) {
+      sizeInput.current.state.value = data.level.size
+      for (let i = 0; i < data.level.size; i++) {
+        colorInputs.current[i].state.value = data.level.colors[i]
+        for (let j = 0; j < data.level.size; j++) {
+          stepInputs.current[`${i},${j}`].state.value =
+            data.level.cells[i][j].steps
+          targetRowInputs.current[`${i},${j}`].state.value =
+            data.level.cells[i][j].targetRow
+        }
+      }
+    }
+  }
+
+  // query level data
+  const [getLevel, { error, data }] = useLazyQuery(GET_LEVEL, {
+    onCompleted: updateData,
+  })
+
   const handleSubmit = () => {
+    let level = levelInput.current.state.value
+    let colorList = []
+    for (let i = 0; i < size; i++) {
+      colorList.push(colorInputs.current[i].state.value)
+    }
+
+    let grid = []
+    for (let i = 0; i < size; i++) {
+      let row = []
+      for (let j = 0; j < size; j++) {
+        row.push({
+          row: i,
+          col: j,
+          steps: stepInputs.current[`${i},${j}`].state.value,
+          targetRow: targetRowInputs.current[`${i},${j}`].state.value,
+        })
+      }
+      grid.push(row)
+    }
+
     createLevel({
       variables: {
         input: {
-          level: 14,
-          size: 4,
-          colors: ["#0288D1", "#BDBDBD", "#FFF3E0", "#CFD8DC"],
-          cells: [
-            [
-              {
-                targetRow: 3,
-                steps: 3,
-                col: 0,
-                row: 0,
-              },
-              {
-                targetRow: 0,
-                steps: 1,
-                col: 1,
-                row: 0,
-              },
-              {
-                targetRow: 1,
-                steps: 1,
-                col: 2,
-                row: 0,
-              },
-              {
-                targetRow: 1,
-                steps: 1,
-                col: 3,
-                row: 0,
-              },
-            ],
-            [
-              {
-                targetRow: 1,
-                steps: 1,
-                col: 0,
-                row: 1,
-              },
-              {
-                targetRow: 1,
-                steps: 1,
-                col: 1,
-                row: 1,
-              },
-              {
-                targetRow: 0,
-                steps: 1,
-                col: 2,
-                row: 1,
-              },
-              {
-                targetRow: 0,
-                steps: 1,
-                col: 3,
-                row: 1,
-              },
-            ],
-            [
-              {
-                targetRow: 2,
-                steps: 1,
-                col: 0,
-                row: 2,
-              },
-              {
-                targetRow: 2,
-                steps: 1,
-                col: 1,
-                row: 2,
-              },
-              {
-                targetRow: 2,
-                steps: 1,
-                col: 2,
-                row: 2,
-              },
-              {
-                targetRow: 2,
-                steps: 1,
-                col: 3,
-                row: 2,
-              },
-            ],
-            [
-              {
-                targetRow: 0,
-                steps: 2,
-                col: 0,
-                row: 3,
-              },
-              {
-                targetRow: 3,
-                steps: 1,
-                col: 1,
-                row: 3,
-              },
-              {
-                targetRow: 3,
-                steps: 1,
-                col: 2,
-                row: 3,
-              },
-              {
-                targetRow: 3,
-                steps: 2,
-                col: 3,
-                row: 3,
-              },
-            ],
-          ],
+          level: level,
+          size: size,
+          colors: colorList,
+          cells: grid,
         },
       },
     })
   }
 
-  return <Button onClick={() => handleSubmit()}>submit</Button>
+  const onLevelChanged = (value) => {
+    getLevel({
+      variables: { id: value },
+    })
+  }
+
+  const onSizeChanged = (value) => {
+    setSize(value)
+  }
+
+  return (
+    <>
+      <InputNumber
+        placeholder="size"
+        ref={sizeInput}
+        onChange={onSizeChanged}
+      />
+      <InputNumber
+        placeholder="level"
+        ref={levelInput}
+        onChange={onLevelChanged}
+      />
+      {rows}
+      <Button onClick={() => handleSubmit()}>submit</Button>
+    </>
+  )
 }
 
 export default CreateGame

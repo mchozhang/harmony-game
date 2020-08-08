@@ -35,6 +35,7 @@ const Cell = (props) => {
   useEffect(() => {
     // update cell states, triggered when any cell config is updated
     let cellColor = computeColor(cells[row][col], colors)
+    console.log(row, col, colors)
     setColor(cellColor)
     setContrastColor(computeContrastColor(cellColor))
 

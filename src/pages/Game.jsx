@@ -1,10 +1,8 @@
 /**
  * Game page, displays the layout of the game
  */
-import { Layout } from "antd"
 import React, { useState, useEffect } from "react"
 import GameGrid from "../components/GameGrid"
-import TopBar from "../components/TopBar"
 import PropTypes from "prop-types"
 import { GameContext } from "../utils/GameContext"
 import { cloneDeep } from "lodash"
@@ -12,12 +10,11 @@ import { useHistory } from "react-router-dom"
 import { useQuery } from "@apollo/client"
 import { GET_LEVEL } from "../utils/GraphQL"
 import { hasWon, isDead } from "../utils/GameSolver"
-import "../styles/game.less"
 import Cookies from "universal-cookie"
 import GameTopBar from "../components/GameTopBar"
 import GameBottomBar from "../components/GameBottomBar"
+import "../styles/game.less"
 
-const { Content } = Layout
 const cookies = new Cookies()
 
 const Game = (props) => {
@@ -39,7 +36,6 @@ const Game = (props) => {
    * restart the game, re-initialize the game config
    */
   const restart = () => {
-    console.log("restart")
     setCells(cloneDeep(data.level.cells))
     setColors(cloneDeep(data.level.colors))
     setSize(data.level.size)
@@ -172,16 +168,11 @@ const Game = (props) => {
   }
 
   return (
-    <Layout>
-      <TopBar />
-      <Content>
-        <GameContext.Provider value={context}>
-          <GameTopBar />
-          <GameGrid />
-          <GameBottomBar />
-        </GameContext.Provider>
-      </Content>
-    </Layout>
+    <GameContext.Provider value={context}>
+      <GameTopBar />
+      <GameGrid />
+      <GameBottomBar />
+    </GameContext.Provider>
   )
 }
 
