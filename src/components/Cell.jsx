@@ -35,7 +35,6 @@ const Cell = (props) => {
   useEffect(() => {
     // update cell states, triggered when any cell config is updated
     let cellColor = computeColor(cells[row][col], colors)
-    console.log(row, col, colors)
     setColor(cellColor)
     setContrastColor(computeContrastColor(cellColor))
 
@@ -79,6 +78,7 @@ const Cell = (props) => {
     for (let i = 0; i < cells[row][col].steps; i++) {
       stars.push(
         <FontAwesomeIcon
+          className="step"
           size="2x"
           icon={faStar}
           color={contrastColor}
@@ -100,6 +100,9 @@ const Cell = (props) => {
         backgroundColor: color,
         borderWidth: borderWidth,
         borderColor: contrastColor,
+        width: `${13.5 - colors.length}rem`,
+        height: `${13.5 - colors.length}rem`,
+        // size: `${14 - colors.length}rem`,
       }}
       align="center"
       onClick={() => onCellClicked()}

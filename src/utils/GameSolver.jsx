@@ -4,6 +4,8 @@
 import PriorityQueue from "js-priority-queue"
 import { cloneDeep } from "lodash"
 
+let heuristicMap = new Map()
+
 function aStarSearch(grid) {
   if (isDead(grid)) {
     return []
@@ -11,29 +13,35 @@ function aStarSearch(grid) {
 
   let queue = new PriorityQueue({
     comparator: function (a, b) {
-      return heuristic(a) - heuristic(b)
+      return heuristicMap.get(a.toString()) - heuristicMap.get(b.toString())
     },
   })
   let startState = new State(grid)
-  let explored = new GridSet()
+  let explored = new Set()
 
+  heuristicMap.set(startState.toString(), heuristic(startState))
+  explored.add(startState.toString())
   queue.queue(startState)
-  explored.add(startState)
   while (queue.length > 0) {
     let currentState = queue.dequeue()
 
-    if (hasWon(currentState.grid)) {
+    if (currentState.hasWon) {
+      console.log("explored:", explored.size)
       return solutionMoves(currentState)
     }
 
     let validMoves = getValidMoves(currentState.grid)
     for (let i = 0; i < validMoves.length; i++) {
-      let newState = new State(cloneDeep(currentState.grid))
-      newState.takeAction(validMoves[i])
-      if (!explored.has(newState)) {
-        newState.parent = currentState
-        explored.add(newState)
-        queue.queue(newState)
+      let newState = currentState.takeAction(validMoves[i])
+      if (!explored.has(newState.toString())) {
+        let heuristicVal = heuristic(newState)
+        heuristicMap.set(newState.toString(), heuristicVal)
+
+        // heuristic value greater than 1000 is considered to be dead
+        if (heuristicVal < 1000) {
+          explored.add(newState.toString())
+          queue.queue(newState)
+        }
       }
     }
   }
@@ -106,73 +114,80 @@ function exchangeable(origin, target) {
 class State {
   constructor(grid) {
     this.grid = grid
+    this.cost = 0
     this.lastMove = null
     this.parent = null
+    this.size = grid.length
+    this.count = grid.length * grid.length
+    this.str = ""
+    this.completeCount = 0
+    for (let i = 0; i < this.size; i++) {
+      for (let j = 0; j < this.size; j++) {
+        let cell = grid[i][j]
+        this.str += `${cell.steps}${cell.targetRow}`
+        if (isCellComplete(cell)) {
+          this.completeCount++
+        }
+      }
+    }
+    this.hasWon = this.completeCount === this.count
   }
 
   takeAction(move) {
-    let firstCell = this.grid[move[0]][move[1]]
-    let secondCell = this.grid[move[2]][move[3]]
+    // update grid data
+    let newGrid = cloneDeep(this.grid)
+    let firstCell = newGrid[move[0]][move[1]]
+    let secondCell = newGrid[move[2]][move[3]]
     let tmpSteps = firstCell.steps
     let tmpTargetRow = firstCell.targetRow
     firstCell.steps = secondCell.steps - 1
     firstCell.targetRow = secondCell.targetRow
     secondCell.steps = tmpSteps - 1
     secondCell.targetRow = tmpTargetRow
-    this.lastMove = move
+
+    // copy new state
+    let state = new State(newGrid)
+    state.parent = this
+    state.cost = this.cost + 1
+    state.lastMove = move
+
+    return state
   }
 
   toString() {
-    let result = ""
-    for (let i = 0; i < this.grid.length; i++) {
-      for (let j = 0; j < this.grid.length; j++) {
-        let cell = this.grid[i][j]
-        result += `(${cell.steps},${cell.targetRow})`
-      }
-    }
-    return result
+    return this.str
   }
 }
-
-/**
- * A set structure to keep non-identical grid states
- */
-class GridSet extends Set {
-  add(state) {
-    super.add(state.toString())
-  }
-
-  has(state) {
-    return super.has(state.toString())
-  }
-}
-
-let map = new Map()
 
 /**
  * heuristic function of the grid search
  * @param state 2D cell list
  */
 function heuristic(state) {
-  let key = state.toString()
-  if (map.has(key)) {
-    return map.get(key)
-  }
-
-  let grid = state.grid
   let count = 0
-  for (let i = 0; i < grid.length; i++) {
-    for (let j = 0; j < grid.length; j++) {
-      let cell = grid[i][j]
+  for (let i = 0; i < state.grid.length; i++) {
+    for (let j = 0; j < state.grid.length; j++) {
+      let cell = state.grid[i][j]
       if (cell.row !== cell.targetRow) {
-        count++
-      } else if (cell.steps > 0) {
+        if (isCellComplete(state.grid[cell.targetRow][j])) {
+          if (cell.steps === 1) {
+            count += 1000
+          } else {
+            count += 2
+          }
+        } else {
+          if (cell.steps === 1) {
+            count++
+          } else {
+            count += 2
+          }
+        }
+      } else {
         count++
       }
     }
   }
-  map.set(key, count / 2)
-  return count / 2
+  return count
 }
 
 function solutionMoves(state) {
@@ -186,6 +201,15 @@ function solutionMoves(state) {
     current = current.parent
   }
   return result
+}
+
+/**
+ * whether the cell is complete
+ * @param cell cell object
+ * @returns {boolean}
+ */
+const isCellComplete = (cell) => {
+  return cell.steps === 0 && cell.targetRow === cell.row
 }
 
 /**
