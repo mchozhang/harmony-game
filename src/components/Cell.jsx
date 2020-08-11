@@ -102,7 +102,6 @@ const Cell = (props) => {
         borderColor: contrastColor,
         width: `${13.5 - colors.length}rem`,
         height: `${13.5 - colors.length}rem`,
-        // size: `${14 - colors.length}rem`,
       }}
       align="center"
       onClick={() => onCellClicked()}
