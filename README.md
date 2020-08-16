@@ -1,6 +1,6 @@
 # Harmony Game
-Harmony Game([Click here to play](https://master.dg9tray1uvpm6.amplifyapp.com/)  ) is a web game simulate the iOS puzzle game 
-["har.mo.ny 3"](https://apps.apple.com/us/app/har-mo-ny-3/id982805507).    
+Harmony Game([Click here to play](https://master.dg9tray1uvpm6.amplifyapp.com/)  ) is a web game simulating the iOS puzzle
+game ["har.mo.ny 3"](https://apps.apple.com/us/app/har-mo-ny-3/id982805507).    
 
 Technical stack:  
 Frontend: React + Webpack + Ant.d, deployed on AWS amplify  
