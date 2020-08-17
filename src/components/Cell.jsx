@@ -115,7 +115,6 @@ const Cell = (props) => {
 
 function getCellWidth(size) {
   let isMobile = window.matchMedia("(max-device-width: 1024px)").matches
-  console.log(isMobile)
   return isMobile ? 15 - size : 13 - size
 }
 
