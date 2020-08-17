@@ -93,6 +93,8 @@ const Cell = (props) => {
     return stars
   }
 
+  let cellWidth = getCellWidth(colors.length)
+
   return (
     <Space
       className="cell"
@@ -100,8 +102,8 @@ const Cell = (props) => {
         backgroundColor: color,
         borderWidth: borderWidth,
         borderColor: contrastColor,
-        width: `${13.5 - colors.length}rem`,
-        height: `${13.5 - colors.length}rem`,
+        width: `${cellWidth}rem`,
+        height: `${cellWidth}rem`,
       }}
       align="center"
       onClick={() => onCellClicked()}
@@ -109,6 +111,12 @@ const Cell = (props) => {
       {icons}
     </Space>
   )
+}
+
+function getCellWidth(size) {
+  let isMobile = window.matchMedia("(max-device-width: 1024px)").matches
+  console.log(isMobile)
+  return isMobile ? 15 - size : 13 - size
 }
 
 Cell.propTypes = {

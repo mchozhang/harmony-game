@@ -11,7 +11,7 @@ Backend([repo here](https://github.com/mchozhang/harmony-server)): Serverless(AW
 * Using GraphQL queries to request game data and mutations to create new game.
 * Using Ant.design as the UI library.
 * Using Cookie to keep conquered games data.
-* Using heuristic search algorithm(A* search) to solve the game(Good way to "cheat"!).
+* Using heuristic search algorithm(greedy search) to solve the top 20 levels(Good way to "cheat"!).
 * Deployed to AWS amplify 
 * A good example of web-app implementation with React frontend and serverless GraphQL backend.
 * A good example of usage of React hooks(useContext, useState, useRef, etc.)

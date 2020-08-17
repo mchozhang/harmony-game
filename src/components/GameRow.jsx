@@ -14,8 +14,8 @@ const GameRow = (props) => {
 
   return (
     <Row justify="center">
-      <Col flex="5 1" style={{ backgroundColor: color }} />
-      <Col flex="0 450px">
+      <Col flex="1 1 0" style={{ backgroundColor: color }} />
+      <Col flex="0 0 100px">
         <Space size={0}>
           {rowCells.map((cell) => (
             <Cell
@@ -26,7 +26,7 @@ const GameRow = (props) => {
           ))}
         </Space>
       </Col>
-      <Col flex="5 1" style={{ backgroundColor: color }} />
+      <Col flex="1 1 0" style={{ backgroundColor: color }} />
     </Row>
   )
 }

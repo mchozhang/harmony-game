@@ -6,7 +6,7 @@ import { cloneDeep } from "lodash"
 
 let heuristicMap = new Map()
 
-function aStarSearch(grid) {
+function greedySearch(grid) {
   if (isDead(grid)) {
     return []
   }
@@ -35,7 +35,7 @@ function aStarSearch(grid) {
     for (let i = 0; i < validMoves.length; i++) {
       let newState = currentState.takeAction(validMoves[i])
       if (!explored.has(newState.toString())) {
-        let heuristicVal = heuristic(newState) + newState.cost
+        let heuristicVal = heuristic(newState)
         heuristicMap.set(newState.toString(), heuristicVal)
 
         // heuristic value greater than 1000 is considered to be dead
@@ -263,4 +263,4 @@ const isDead = (cells) => {
   return false
 }
 
-export { aStarSearch, hasWon, isDead }
+export { greedySearch, hasWon, isDead }

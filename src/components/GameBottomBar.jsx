@@ -14,7 +14,7 @@ import {
 import { useGameContext } from "../utils/GameContext"
 import { computeContrastColor } from "../utils/ColorUtils"
 import "../styles/game.less"
-import { aStarSearch } from "../utils/GameSolver"
+import { greedySearch } from "../utils/GameSolver"
 
 const GameBottomBar = (props) => {
   const {
@@ -39,7 +39,7 @@ const GameBottomBar = (props) => {
    */
   const getHint = () => {
     let search = new Promise((resolve, reject) => {
-      let solution = aStarSearch(cells)
+      let solution = greedySearch(cells)
       if (solution.length !== 0) {
         resolve(solution)
       } else {
