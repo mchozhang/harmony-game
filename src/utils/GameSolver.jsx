@@ -23,6 +23,7 @@ function aStarSearch(grid) {
   explored.add(startState.toString())
   queue.queue(startState)
   while (queue.length > 0) {
+    // console.log("queue length:", queue.length)
     let currentState = queue.dequeue()
 
     if (currentState.hasWon) {
@@ -34,7 +35,7 @@ function aStarSearch(grid) {
     for (let i = 0; i < validMoves.length; i++) {
       let newState = currentState.takeAction(validMoves[i])
       if (!explored.has(newState.toString())) {
-        let heuristicVal = heuristic(newState)
+        let heuristicVal = heuristic(newState) + newState.cost
         heuristicMap.set(newState.toString(), heuristicVal)
 
         // heuristic value greater than 1000 is considered to be dead
@@ -160,30 +161,41 @@ class State {
 }
 
 /**
- * heuristic function of the grid search
+ * heuristic function of the grid search，
+ * calculate the expected steps for a cell to get to its target,
+ * rule out some dead state by adding 1000 to the counter.
  * @param state 2D cell list
  */
 function heuristic(state) {
   let count = 0
+  let targetedCell = new Set()
   for (let i = 0; i < state.grid.length; i++) {
     for (let j = 0; j < state.grid.length; j++) {
       let cell = state.grid[i][j]
-      if (cell.row !== cell.targetRow) {
-        if (isCellComplete(state.grid[cell.targetRow][j])) {
-          if (cell.steps === 1) {
-            count += 1000
+      if (cell.steps === 1) {
+        let targetKey = `${i}${j}`
+        // cells with 1 step remained
+        if (cell.row !== cell.targetRow) {
+          // a cell not in target row with 1 step remained
+          if (
+            isCellComplete(state.grid[cell.targetRow][j]) ||
+            targetedCell.has(targetKey)
+          ) {
+            // game is dead when target cell is occupied
+            // or 2 cells has the same target
+            return 9999
           } else {
-            count += 2
+            // target cell is fixed
+            targetedCell.add(targetKey)
+            count++
           }
         } else {
-          if (cell.steps === 1) {
-            count++
-          } else {
-            count += 2
-          }
+          // cell in the target row but not complete
+          count++
         }
-      } else {
-        count++
+      } else if (!isCellComplete(cell)) {
+        // non-complete cells are all considered as 2 steps away
+        count += 2
       }
     }
   }

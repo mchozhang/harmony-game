@@ -38,13 +38,24 @@ const GameBottomBar = (props) => {
    * show hint for the next move
    */
   const getHint = () => {
-    let solution = aStarSearch(cells)
-    if (solution.length === 0) {
-      noSolutionWarning()
-    } else {
-      setSelectedCell(null)
-      setHintMove(solution[0])
-    }
+    let search = new Promise((resolve, reject) => {
+      let solution = aStarSearch(cells)
+      if (solution.length !== 0) {
+        resolve(solution)
+      } else {
+        reject()
+      }
+    }).then(
+      (solution) => {
+        // solution found
+        setSelectedCell(null)
+        setHintMove(solution[0])
+      },
+      () => {
+        // no solution found
+        noSolutionWarning()
+      }
+    )
   }
 
   function noSolutionWarning() {
