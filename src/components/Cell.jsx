@@ -79,7 +79,7 @@ const Cell = (props) => {
       stars.push(
         <FontAwesomeIcon
           className="step"
-          size="2x"
+          size="lg"
           icon={faStar}
           color={contrastColor}
           key={i}
