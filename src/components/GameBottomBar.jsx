@@ -38,6 +38,11 @@ const GameBottomBar = (props) => {
    * show hint for the next move
    */
   const getHint = () => {
+    // computeSolutionLocally()
+    requestForHintMove()
+  }
+
+  function computeSolutionLocally() {
     let search = new Promise((resolve, reject) => {
       let solution = greedySearch(cells)
       if (solution.length !== 0) {
@@ -53,15 +58,48 @@ const GameBottomBar = (props) => {
       },
       () => {
         // no solution found
-        noSolutionWarning()
+        let msg = "No solution found, you should restart this game."
+        showWarning(msg)
       }
     )
   }
 
-  function noSolutionWarning() {
+  /**
+   * send an http request for hint move
+   */
+  function requestForHintMove() {
+    let requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        level: level,
+        grid: cells,
+      }),
+    }
+    fetch("https://harmony-solution.herokuapp.com/", requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "success") {
+          setSelectedCell(null)
+          let action = data.action
+          if (
+            cells[action[0]][action[1]].steps > 0 &&
+            cells[action[2]][action[3]].steps > 0
+          ) {
+            setHintMove(data.action)
+          } else {
+            showWarning("No solution found, you should restart this game.")
+          }
+        } else {
+          showWarning("An error has occurred during requesting for hint move.")
+        }
+      })
+  }
+
+  function showWarning(message) {
     let secondsToGo = 3
     const modal = Modal.success({
-      content: "No solution found, you should restart this game.",
+      content: message,
     })
 
     const timer = setInterval(() => {
