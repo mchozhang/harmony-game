@@ -6,6 +6,7 @@ Technical stack:
 Frontend: React + Webpack + Ant.d, deployed on AWS amplify  
 Backend([repo here](https://github.com/mchozhang/harmony-server)): Serverless(AWS lambda) + GraphQL + DynamoDB + Golang  
 Solution-Backend([repo here](https://github.com/mchozhang/harmony-solution)): tensorflow + reinforcement learning + flask
+
 ## Features
 * A simulation of the original game with high-fidelity.
 * Using GraphQL queries to request game data and mutations to create new game.

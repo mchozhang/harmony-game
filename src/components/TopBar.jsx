@@ -3,15 +3,18 @@
  */
 import { Layout } from "antd"
 import React from "react"
-import { Link } from "react-router-dom"
+import { NavLink } from "react-router-dom"
+import "../styles/header.less"
 
 const { Header } = Layout
 
 const TopBar = (props) => {
   return (
-    <Link to={"/"}>
-      <Header>Harmony Game</Header>
-    </Link>
+    <Header>
+      <NavLink to={"/"} className="logo">
+        Harmony Game
+      </NavLink>
+    </Header>
   )
 }
 

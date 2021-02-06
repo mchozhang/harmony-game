@@ -14,6 +14,8 @@ import Cookies from "universal-cookie"
 import GameTopBar from "../components/GameTopBar"
 import GameBottomBar from "../components/GameBottomBar"
 import "../styles/game.less"
+import TopBar from "../components/TopBar"
+import RuleModal from "../components/RuleModal"
 
 const cookies = new Cookies()
 
@@ -58,7 +60,9 @@ const Game = (props) => {
 
   // display query loading and error
   if (loading) return null
-  if (error) return `Error! ${error}`
+  if (error) {
+    return `Error! ${error}`
+  }
 
   /**
    * handle cell clicked event

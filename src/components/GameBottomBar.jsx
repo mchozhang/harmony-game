@@ -15,6 +15,7 @@ import { useGameContext } from "../utils/GameContext"
 import { computeContrastColor } from "../utils/ColorUtils"
 import "../styles/game.less"
 import { greedySearch } from "../utils/GameSolver"
+import config from "../config/config.json"
 
 const GameBottomBar = (props) => {
   const {
@@ -76,7 +77,8 @@ const GameBottomBar = (props) => {
         grid: cells,
       }),
     }
-    fetch("https://harmony-solution.herokuapp.com/", requestOptions)
+
+    fetch(config.solutionEndpoint, requestOptions)
       .then((response) => response.json())
       .then((data) => {
         if (data.status === "success") {
@@ -145,7 +147,7 @@ const GameBottomBar = (props) => {
           title="hint"
           type="text"
           className="hint-btn"
-          onClick={() => getHint()}
+          onClick={getHint}
           style={{ color: computeContrastColor(color) }}
         >
           <FontAwesomeIcon icon={faLightbulb} size="2x" />

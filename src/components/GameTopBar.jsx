@@ -2,13 +2,20 @@
  * top bar of the game page, displaying the level and buttons
  */
 import React, { useEffect, useState } from "react"
+import { NavLink } from "react-router-dom"
 import { Button, Col, Modal, Row, Typography } from "antd"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faRedo, faUndo } from "@fortawesome/free-solid-svg-icons"
-import "../styles/game.less"
-import { useGameContext } from "../utils/GameContext"
+import {
+  faRedo,
+  faUndo,
+  faBars,
+  faInfoCircle,
+} from "@fortawesome/free-solid-svg-icons"
+import { GameContext, useGameContext } from "../utils/GameContext"
 import { hasWon } from "../utils/GameSolver"
 import { computeContrastColor } from "../utils/ColorUtils"
+import "../styles/game.less"
+import RuleModal from "./RuleModal"
 
 const { Title } = Typography
 
@@ -25,6 +32,9 @@ const GameTopBar = (props) => {
     handleRestart,
   } = useGameContext()
 
+  // display game rule
+  const [isModalVisible, setIsModalVisible] = useState(false)
+
   // background color
   const [color, setColor] = useState("#ffffff")
 
@@ -37,7 +47,7 @@ const GameTopBar = (props) => {
   /**
    * undo the last move
    */
-  function undo() {
+  const undo = () => {
     if (lastMove === null || hasWon(cells)) {
       undoWarning()
       return
@@ -82,34 +92,76 @@ const GameTopBar = (props) => {
     }, secondsToGo * 1000)
   }
 
+  // show the modal of game rule text
+  const displayRuleModal = () => {
+    setIsModalVisible(true)
+  }
+
   return (
-    <Row style={{ backgroundColor: color }}>
-      <Col flex="5" />
-      <Col flex="0 450px" className="top-bar">
-        <Title className="title" style={{ color: computeContrastColor(color) }}>
-          Level {level}
-        </Title>
-        <Button
-          className="undo-btn"
-          type="text"
-          title="undo"
-          style={{ color: computeContrastColor(color) }}
-          onClick={() => undo()}
-        >
-          <FontAwesomeIcon icon={faUndo} size="2x" />
-        </Button>
-        <Button
-          className="restart-btn"
-          type="text"
-          title="restart"
-          style={{ color: computeContrastColor(color) }}
-          onClick={() => handleRestart()}
-        >
-          <FontAwesomeIcon icon={faRedo} size="2x" />
-        </Button>
-      </Col>
-      <Col flex="5" />
-    </Row>
+    <>
+      <Row style={{ backgroundColor: color }}>
+        <Col flex="1" />
+        <Col flex="0 500px" className="top-bar">
+          <Title
+            className="title"
+            style={{ color: computeContrastColor(color) }}
+          >
+            Level {level}
+          </Title>
+
+          {/*buttons on the left*/}
+          <div className="left-btn-group">
+            {/*menu button*/}
+            <NavLink to="/">
+              <Button
+                type="text"
+                className="menu-btn"
+                title="menu"
+                style={{ color: computeContrastColor(color) }}
+              >
+                <FontAwesomeIcon icon={faBars} size="2x" />
+              </Button>
+            </NavLink>
+
+            {/*undo button*/}
+            <Button
+              className="undo-btn"
+              type="text"
+              title="undo"
+              style={{ color: computeContrastColor(color) }}
+              onClick={undo}
+            >
+              <FontAwesomeIcon icon={faUndo} size="2x" />
+            </Button>
+          </div>
+
+          <div className="right-btn-group">
+            {/*restart button*/}
+            <Button
+              type="text"
+              title="restart"
+              style={{ color: computeContrastColor(color) }}
+              onClick={handleRestart}
+            >
+              <FontAwesomeIcon icon={faRedo} size="2x" />
+            </Button>
+
+            {/*info button*/}
+            <Button
+              className="undo-btn"
+              type="text"
+              title="check the game rule"
+              style={{ color: computeContrastColor(color) }}
+              onClick={displayRuleModal}
+            >
+              <FontAwesomeIcon icon={faInfoCircle} size="2x" />
+            </Button>
+          </div>
+        </Col>
+        <Col flex="1" />
+      </Row>
+      <RuleModal visible={isModalVisible} setVisibility={setIsModalVisible} />
+    </>
   )
 }
 
